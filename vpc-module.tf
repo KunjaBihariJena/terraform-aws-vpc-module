@@ -7,29 +7,19 @@ resource "aws_vpc" "main" {
   }
 }
 
-resource "aws_subnet" "us-east-1a" {
+variable "subnets_cidr" {
+  description = "total number of subnets"
+  type        = list(string)
+  default     = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
+}
+
+resource "aws_subnet" "sub" {
+  for_each          = toset(var.subnets_cidr)
   vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.1.0/24"
+  cidr_block        = each.key
   availability_zone = "us-east-1a"
+
   tags = {
     Name = "us-east-1a"
-  }
-}
-
-resource "aws_subnet" "us-east-1b" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.2.0/24"
-  availability_zone = "us-east-1b"
-  tags = {
-    Name = "us-east-1b"
-  }
-}
-
-resource "aws_subnet" "us-east-1c" {
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = "10.0.3.0/24"
-  availability_zone = "us-east-1c"
-  tags = {
-    Name = "us-east-1c"
   }
 }
